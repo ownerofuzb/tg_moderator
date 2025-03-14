@@ -33,7 +33,6 @@ def restrict_user(update: Update, context: CallbackContext):
     user_name = update.message.from_user.full_name
 
     try:
-        # Restrict user for 10 minutes
         context.bot.restrict_chat_member(
             chat_id=chat_id,
             user_id=user_id,
@@ -42,13 +41,11 @@ def restrict_user(update: Update, context: CallbackContext):
         )
         print(f"Restricted {user_name} for 5 minutes.")
 
-        # Send warning message
         warning_message = context.bot.send_message(
             chat_id=chat_id,
             text=f"🚨 {user_name} has been restricted for 5 minutes due to spamming."
         )
 
-        # Schedule deletion of the warning message after 10 minutes
         context.job_queue.run_once(delete_warning_message, 300, context=(chat_id, warning_message.message_id))
 
     except Exception as e:
