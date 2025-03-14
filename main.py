@@ -4,7 +4,7 @@ from flask import Flask
 from telegram import Update
 from telegram.ext import Updater, MessageHandler, Filters, CallbackContext
 
-TOKEN = os.getenv("7560870825:AAH6Sr1KLt6G8l8tdPN-6vC5FPmNnWg9EH4")  # Get token from environment variable
+TOKEN = os.getenv("BOT_TOKEN")  # Get token from environment variable
 
 app = Flask(__name__)  # Flask server to keep Render's web service alive
 
