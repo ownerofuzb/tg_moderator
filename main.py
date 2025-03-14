@@ -13,6 +13,9 @@ user_messages = {}
 
 BANNED_WORDS = ["free money", "fuck", "bitch", "nigga", "nigger", "Хуй","сука","Блять","Гавно","Мудак","Пошёл на хуй","Ублюдок","Блядь","Гандон", "Пиздец", "Сволочь","Блять",]
 
+def start(update: Update, context: CallbackContext):
+    update.message.reply_text("🤖 Hello! I'm your group management bot. I will delete all spam messages from your group!\nTo activate me add me to your group and promote to admin")
+
 def restrict_user(update: Update, context: CallbackContext):
     """Restricts the user from sending messages for 10 minutes and sends a warning message."""
     user_id = update.message.from_user.id
@@ -105,6 +108,7 @@ def delete_spam_media(update: Update, context: CallbackContext):
 def run_telegram_bot():
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
+    dp.add_handler(CommandHandler("start", start))
 
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, detect_spam))
 
