@@ -16,6 +16,12 @@ def delete_join_messages(update: Update, context: CallbackContext):
             print(f"Deleted a join message from {update.message.from_user.full_name}")
         except Exception as e:
             print(f"Failed to delete message: {e}")
+    if update.message and update.message.left_chat_member:
+        try:
+            update.message.delete()
+            print(f"Deleted a left message from {update.message.from_user.full_name}")
+        except Exception as e:
+            print(f"Failed to delete message: {e}")
 
 def run_telegram_bot():
     updater = Updater(TOKEN, use_context=True)
