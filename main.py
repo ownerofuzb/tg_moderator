@@ -25,28 +25,45 @@ def start(update: Update, context: CallbackContext):
     )
 
 
+
 def restrict_user(update: Update, context: CallbackContext):
+    """Restricts the user from sending messages for 10 minutes and sends a warning message, which is deleted after 10 minutes."""
     user_id = update.message.from_user.id
     chat_id = update.message.chat_id
     user_name = update.message.from_user.full_name
 
     try:
+        # Restrict user for 10 minutes
         context.bot.restrict_chat_member(
             chat_id=chat_id,
             user_id=user_id,
             permissions=ChatPermissions(can_send_messages=False),
-            until_date=time.time() + 600  # Restrict for 10 minutes
+            until_date=time.time() + 300 
         )
-        print(f"Restricted {user_name} for 10 minutes.")
+        print(f"Restricted {user_name} for 5 minutes.")
 
-        
-        context.bot.send_message(
+        # Send warning message
+        warning_message = context.bot.send_message(
             chat_id=chat_id,
-            text=f"🚨 {user_name} has been restricted for 10 minutes due to spamming."
+            text=f"🚨 {user_name} has been restricted for 5 minutes due to spamming."
         )
+
+        # Schedule deletion of the warning message after 10 minutes
+        context.job_queue.run_once(delete_warning_message, 300, context=(chat_id, warning_message.message_id))
+
     except Exception as e:
         print(f"Failed to restrict user: {e}")
 
+def delete_warning_message(context: CallbackContext):
+    """Deletes the warning message after 10 minutes."""
+    job_context = context.job.context
+    chat_id, message_id = job_context
+
+    try:
+        context.bot.delete_message(chat_id=chat_id, message_id=message_id)
+        print(f"Deleted restriction warning message in chat {chat_id}.")
+    except Exception as e:
+        print(f"Failed to delete warning message: {e}")
 
 def detect_spam(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
