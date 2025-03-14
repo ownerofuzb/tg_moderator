@@ -1,6 +1,5 @@
 import os
 import time
-from threading import Thread
 from flask import Flask
 from telegram import Update, ChatPermissions
 from telegram.ext import Updater, MessageHandler, Filters, CallbackContext
@@ -118,12 +117,14 @@ def run_telegram_bot():
     updater.start_polling()
     updater.idle()
 
-bot_thread = Thread(target=run_telegram_bot)
-bot_thread.start()
+
 
 @app.route('/')
 def home():
     return "Bot is running!"
 
 if __name__ == "__main__":
+    from threading import Thread
+    bot_thread = Thread(target=run_telegram_bot)
+    bot_thread.start()
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
