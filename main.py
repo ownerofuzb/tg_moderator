@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 user_messages = {}
 
-BANNED_WORDS = ["free money", "fuck", "bitch", "nigga", "nigger", "Хуй","сука","Блять","Гавно","Мудак","Пошёл на хуй","Ублюдок,"Блядь","Гандон", "Пиздец", "Сволочь","Блять",]
+BANNED_WORDS = ["free money", "fuck", "bitch", "nigga", "nigger", "Хуй","сука","Блять","Гавно","Мудак","Пошёл на хуй","Ублюдок","Блядь","Гандон", "Пиздец", "Сволочь","Блять",]
 
 def restrict_user(update: Update, context: CallbackContext):
     """Restricts the user from sending messages for 10 minutes and sends a warning message."""
