@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 user_messages = {}
 
-BANNED_WORDS = ["spam", "fake", "scam", "click here", "free money"]
+BANNED_WORDS = ["free money", "fuck", "bitch", "nigga", "nigger", "Хуй","сука","Блять","Гавно","Мудак","Пошёл на хуй","Ублюдок,"Блядь","Гандон", "Пиздец", "Сволочь","Блять",]
 
 def restrict_user(update: Update, context: CallbackContext):
     """Restricts the user from sending messages for 10 minutes and sends a warning message."""
@@ -44,7 +44,7 @@ def detect_spam(update: Update, context: CallbackContext):
     print(f"User {update.message.from_user.full_name} sent message: {text}")
 
 
-    if any(word in text for word in BANNED_WORDS):
+    if any(word.lower() in text.lower() in BANNED_WORDS):
         try:
             update.message.delete()
             print(f"Deleted spam message from {update.message.from_user.full_name} (Blacklisted word)")
