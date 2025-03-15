@@ -125,14 +125,30 @@ def delete_spam_media(update: Update, context: CallbackContext):
                 print(f"Failed to delete spam {media_type}: {e}")
     else:
         user_messages[user_id] = (media_type, time.time(), 1)
+        
+def delete_join_messages(update: Update, context: CallbackContext):
+    if update.message:
+        try:
+            
+            if update.message.new_chat_members:
+                update.message.delete()
+                print(f"Deleted join message from {update.message.from_user.full_name}")
 
+            
+            if update.message.left_chat_member:
+                update.message.delete()
+                print(f"Deleted leave message from {update.message.left_chat_member.full_name}")
+
+        except Exception as e:
+            print(f"Failed to delete message: {e}")
+            
 def run_telegram_bot():
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
-
-    dp.add_handler(CommandHandler("start", start))  # Handle /start command
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, detect_spam))  # Handle spam text
-    dp.add_handler(MessageHandler(Filters.animation | Filters.sticker, delete_spam_media))  # Handle spam media
+    dp.add_handler(MessageHandler(Filters.status_update, delete_join_messages))
+    dp.add_handler(CommandHandler("start", start))  
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, detect_spam)) 
+    dp.add_handler(MessageHandler(Filters.animation | Filters.sticker, delete_spam_media))  
 
     print("Bot is running...")
     updater.start_polling()
