@@ -14,7 +14,7 @@ user_messages = {}
 BANNED_WORDS = [
     "free money", "fuck", "bitch", "nigga", "nigger", "Хуй", "сука", "Блять",
     "Гавно", "Мудак", "Ублюдок", "Гандон", "Пиздец",
-    "Сволочь", "Бля", "секс", "jala", "еба", "yba", "chert", "черт", "порн", "porno", "gay", "gey", "гей", "жала", "xuy", "huy", "tupoy", "тупой"
+    "Сволочь", "Бля", "секс", "jala", "chert", "порн", "porno", "gay", "gey", "гей", "жала", "xuy", "huy", "tupoy", "тупой"
 ]
 
 
@@ -24,10 +24,14 @@ def start(update: Update, context: CallbackContext):
         "To activate me, add me to your group and promote me to admin."
     )
 
+def report(update: Update, context: CallbackContext, message: str, reason: str):
+    chat_id = update.effective_chat.id
+    debug_chat_id = "7560870825"
+
+    context.bot.send_message(chat_id=debug_chat_id, text=f"Chat ID: {chat_id}\n\nMessage: {message}\n\nReason: {reason}")
 
 
 def restrict_user(update: Update, context: CallbackContext):
-    """Restricts the user from sending messages for 10 minutes and sends a warning message, which is deleted after 10 minutes."""
     user_id = update.message.from_user.id
     chat_id = update.message.chat_id
     user_name = update.message.from_user.full_name
@@ -72,7 +76,7 @@ def detect_spam(update: Update, context: CallbackContext):
     if any(word in text for word in BANNED_WORDS):  
         try:
             update.message.delete()
-            print(f"Deleted spam message from {update.message.from_user.full_name} (Blacklisted word)")
+            report(update, context, text, "BANNED WORDS")
             restrict_user(update, context)
         except Exception as e:
             print(f"Failed to delete spam message: {e}")
@@ -92,7 +96,7 @@ def detect_spam(update: Update, context: CallbackContext):
         if count >= 3:  
             try:
                 update.message.delete()
-                print(f"Deleted spam message from {update.message.from_user.full_name} (Repeated message)")
+                report(update, context, text, "REPEATED MESSAGE")
                 restrict_user(update, context)
             except Exception as e:
                 print(f"Failed to delete spam message: {e}")
@@ -119,7 +123,7 @@ def delete_spam_media(update: Update, context: CallbackContext):
         if count >= 3:  
             try:
                 update.message.delete()
-                print(f"Deleted spam {media_type} from {update.message.from_user.full_name}")
+                report(update, context, text, "REPEATED STICKER/GIFs")
                 restrict_user(update, context)
             except Exception as e:
                 print(f"Failed to delete spam {media_type}: {e}")
